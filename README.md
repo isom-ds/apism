@@ -8,10 +8,8 @@ A collection of social media APIs including:
 ---
 ## X API v2
 
+### Data Model
 ```mermaid
----
-title: Twitter Data Model
----
 erDiagram
   TWEETS
   TIMELINES
@@ -41,27 +39,24 @@ erDiagram
 - `Blocks`
 - `Mutes`
 
+### Requirements
+
 ---
 
 ## YouTube Data API
 
-### Requirements
-`aiogoogle`
-`googleapiclient`
-
+### Data Model
 ```mermaid
 %%{init: {
   "themeCSS": [
     "[id^=entity-SEARCH] .er.entityBox { fill: green;} ",
     "[id^=entity-VIDEOS] .er.entityBox { fill: green;} ",
     "[id^=entity-COMMENTTHREADS] .er.entityBox { fill: green;} ",
-    "[id^=entity-mytable] .er.entityBox { fill: powderblue;} ",
-    "[id^=entity-anothertable] .er.entityBox { fill: pink;} "
+    "[id^=entity-CAPTIONS] .er.entityBox { fill: blue;} ",
+    "[id^=entity-API] .er.entityBox { fill: orange;} ",
+    "[id^=entity-API] .er.entityBox { fill: red;} "
     ]
 }}%%
----
-title: YouTube Data Model
----
 erDiagram
     SEARCH }|--o{ CHANNELS : channelId
     SEARCH }|--o{ VIDEOS : videoId
@@ -80,6 +75,13 @@ erDiagram
     PLAYLISTS ||--|| CHANNELS : channelId
     COMMENTTHREADS ||--|| COMMENTS : commentId
 ```
+
+🟩 Available
+🟦 WIP
+🟧 Fixing
+🟥 Error
+⬜ Not available
+
 ### Endpoints not for data collection 
 - `ChannelBanners`
 - `Members`
@@ -87,3 +89,7 @@ erDiagram
 - `Thumbnails`
 - `VideoAbuseReportReasons`
 - `Watermarks`
+
+### Requirements
+`aiogoogle`
+`googleapiclient`
