@@ -1,11 +1,12 @@
 # Social Media APIs
 
-A collection of social media APIs including
+A collection of social media APIs including:
 
+- [X API v2](<https://developer.x.com/en/docs/x-api>)
 - [YouTube Data API](<https://developers.google.com/youtube/v3>)
 
 ---
-## Twitter / X
+## X API v2
 
 ```mermaid
 ---
