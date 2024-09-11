@@ -1,5 +1,6 @@
 import aiohttp
 import asyncio
+import copy
 
 class YouTubeAPIException(Exception):
     """Custom exception for YouTube API errors"""
@@ -8,16 +9,16 @@ class YouTubeAPIException(Exception):
         self.message = message
         super().__init__(f"API Error {status_code}: {message}")
 
-async def fetch_with_retries(session, url, params, retry_limit=3, retry_delay=1):
+async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session=aiohttp.ClientSession()):
     """
     Fetch data from a URL with retries and handle errors related to disabled comments.
     
     Args:
-        session (aiohttp.ClientSession): The session used to make HTTP requests.
         url (str): The URL to fetch data from.
         params (dict): Parameters to include in the request.
         retry_limit (int): The number of retries to attempt.
         retry_delay (int): The delay between retries in seconds.
+        session (aiohttp.ClientSession): The session used to make HTTP requests.
         
     Returns:
         tuple: A tuple containing the response data and the nextPageToken if available.
@@ -25,10 +26,12 @@ async def fetch_with_retries(session, url, params, retry_limit=3, retry_delay=1)
     Raises:
         Exception: If retries are exhausted and the request still fails.
     """
+    __params__ = copy.deepcopy(params)
     attempt = 0
+
     while attempt <= retry_limit:
         try:
-            async with session.get(url, params=params) as response:
+            async with session.get(url, params=__params__) as response:
                 # Handle quota exceeded case
                 if response.status == 403 and response.reason == 'Quota exceeded':
                     print(f"API quota exceeded")
@@ -38,7 +41,7 @@ async def fetch_with_retries(session, url, params, retry_limit=3, retry_delay=1)
                 
                 # Handle comments disabled case
                 if response.status == 403 and 'disabled comments' in response_data['error'].get('message'):
-                    print_params = {k:v for k,v in params.items() if k != 'key'}
+                    print_params = {k:v for k,v in __params__.items() if k != 'key'}
                     print(f"Comments are disabled for video with params: {print_params}")
                     return None, None
                 
