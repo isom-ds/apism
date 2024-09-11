@@ -6,9 +6,52 @@ A collection of social media APIs including:
 - [YouTube Data API](<https://developers.google.com/youtube/v3>)
 
 ---
-## X API v2
 
-### Data Model
+## Usage
+
+### Installation
+
+```pip install```
+
+### Usage
+
+#### YouTube
+
+```python
+from youtube.search import *
+from youtube.comment_threads import *
+
+# Set query and parameters
+search_params = {
+    'key': key,
+    'part': 'snippet',
+    'type': 'video',
+    'relevanceLanguage': 'en',
+    'publishedAfter': '2022-12-01' + 'T00:00:00Z',
+    'publishedBefore': '2022-12-01' + 'T23:59:59Z',
+    'order': 'viewCount'
+    }
+video_params = {
+    'key': key,
+    'part': 'id,replies,snippet',
+    'order': 'time'
+    }
+
+# Search API
+search_results = await fetch_search_results('FTX', search_params)
+
+# CommentThreads API
+l_video_ids = list(set([i['id']['videoId'] for i in search_results]))
+comments_concurrent_results = await fetch_comment_threads(l_video_ids, video_params)
+```
+
+
+---
+
+## Data Models
+
+### X API v2
+
 ```mermaid
 erDiagram
   TWEETS
@@ -30,7 +73,8 @@ erDiagram
   LISTMEMBERS
 ```
 
-### Endpoints not for data collection 
+Endpoints not for data collection:
+
 - `Manage Tweets`
 - `Spaces`
 - `Direct Messages`
@@ -39,20 +83,17 @@ erDiagram
 - `Blocks`
 - `Mutes`
 
-### Requirements
-
 ---
 
-## YouTube Data API
+### YouTube Data API v3
 
-### Data Model
 ```mermaid
 %%{init: {
   "themeCSS": [
     "[id^=entity-SEARCH] .er.entityBox { fill: green;} ",
-    "[id^=entity-VIDEOS] .er.entityBox { fill: green;} ",
+    "[id^=entity-VIDEOS] .er.entityBox { fill: blue;} ",
     "[id^=entity-COMMENTTHREADS] .er.entityBox { fill: green;} ",
-    "[id^=entity-CAPTIONS] .er.entityBox { fill: blue;} ",
+    "[id^=entity-API] .er.entityBox { fill: blue;} ",
     "[id^=entity-API] .er.entityBox { fill: orange;} ",
     "[id^=entity-API] .er.entityBox { fill: red;} "
     ]
@@ -82,14 +123,12 @@ erDiagram
 🟥 Error
 ⬜ Not available
 
-### Endpoints not for data collection 
+Endpoints not for data collection:
+
+- `Captions`
 - `ChannelBanners`
 - `Members`
 - `MembershipsLevels`
 - `Thumbnails`
 - `VideoAbuseReportReasons`
 - `Watermarks`
-
-### Requirements
-`aiogoogle`
-`googleapiclient`
