@@ -9,40 +9,48 @@ A collection of social media APIs including:
 
 ## Usage
 
-### Installation
+### Installation and Usage
 
-```pip install```
+You can install this package directly from GitHub.
 
-### Usage
+```bash
+pip install git+https://github.com/isom-ds/social-media-api-sdk.git
+```
 
-#### YouTube
+### Usage - YouTube
 
 ```python
-from youtube.search import *
-from youtube.comment_threads import *
+import uoa_isom_ds_sm_api_sdk.youtube as yt
 
 # Set query and parameters
+query = 'FTX'
 search_params = {
     'key': key,
     'part': 'snippet',
     'type': 'video',
+    'maxResults': 50,
     'relevanceLanguage': 'en',
     'publishedAfter': '2022-12-01' + 'T00:00:00Z',
     'publishedBefore': '2022-12-01' + 'T23:59:59Z',
     'order': 'viewCount'
-    }
+}
 video_params = {
+    'key': key,
+    'part': 'id,statistics,topicDetails'
+}
+comments_params = {
     'key': key,
     'part': 'id,replies,snippet',
     'order': 'time'
-    }
+}
 
-# Search API
-search_results = await fetch_search_results('FTX', search_params)
-
-# CommentThreads API
-l_video_ids = list(set([i['id']['videoId'] for i in search_results]))
-comments_concurrent_results = await fetch_comment_threads(l_video_ids, video_params)
+# Search API -> Videos API -> CommentThreads API
+svc_pipeline_results = await yt.search_videos_comments(
+    query,
+    search_params,
+    video_params,
+    comments_params
+)
 ```
 
 
@@ -91,7 +99,7 @@ Endpoints not for data collection:
 %%{init: {
   "themeCSS": [
     "[id^=entity-SEARCH] .er.entityBox { fill: green;} ",
-    "[id^=entity-VIDEOS] .er.entityBox { fill: blue;} ",
+    "[id^=entity-VIDEOS] .er.entityBox { fill: green;} ",
     "[id^=entity-COMMENTTHREADS] .er.entityBox { fill: green;} ",
     "[id^=entity-API] .er.entityBox { fill: blue;} ",
     "[id^=entity-API] .er.entityBox { fill: orange;} ",
