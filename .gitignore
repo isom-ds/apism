@@ -164,5 +164,5 @@ cython_debug/
 # Additional ignores
 tmp/
 *.DS_Store
-social-media-api-sdk/yt_api_key.py
+yt_api_key.py
 .devcontainer
