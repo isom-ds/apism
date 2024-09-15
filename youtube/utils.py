@@ -29,7 +29,7 @@ async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session
     __params__ = copy.deepcopy(params)
     attempt = 0
 
-    while attempt <= retry_limit:
+    while attempt < retry_limit:
         try:
             async with session.get(url, params=__params__) as response:
                 # Handle quota exceeded case
@@ -54,8 +54,9 @@ async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session
                     response.raise_for_status()
         
         except (aiohttp.ClientError, asyncio.TimeoutError) as e:
-            print(f"Attempt {attempt + 1} failed: {e}. Retrying in {retry_delay} seconds...")
+            attempt += 1
+            print(f"Attempt {attempt} failed: {e}. Retrying in {retry_delay} seconds...")
             await asyncio.sleep(retry_delay)
     
     # If all retries fail, raise an exception
-    raise Exception(f"Failed to fetch data from {url} after {retry_delay} attempts.")
+    raise Exception(f"Failed to fetch data from {url} after {attempt} attempts.")

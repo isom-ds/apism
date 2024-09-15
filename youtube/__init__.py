@@ -1,2 +1,3 @@
 from youtube.search import fetch_search_results
+from youtube.videos import fetch_videos
 from youtube.comment_threads import fetch_comment_threads
