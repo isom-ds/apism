@@ -55,7 +55,7 @@ async def fetch_videos(video_id, params, async_delay=0, retry_limit=3, retry_del
     
     Args:
         video_ids (str/list): A single video ID or list of video IDs to fetch data for.
-        params (dict): Parameters such as videoId, part, maxResults, etc.
+        params (dict): Parameters such as id, part, maxResults, etc.
         async_delay(float/int): Delay in seconds between starting each task.
         retry_limit (int): The number of retries to attempt. Default=3
         retry_delay (int): The delay between retries in seconds. Default=1
