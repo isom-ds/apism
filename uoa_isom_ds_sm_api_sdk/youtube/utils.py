@@ -9,7 +9,7 @@ class YouTubeAPIException(Exception):
         self.message = message
         super().__init__(f"API Error {status_code}: {message}")
 
-async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session=aiohttp.ClientSession()):
+async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session=aiohttp.ClientSession(), verbose=False):
     """
     Fetch data from a URL with retries and handle errors related to disabled comments.
     
@@ -19,6 +19,7 @@ async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session
         retry_limit (int): The number of retries to attempt.
         retry_delay (int): The delay between retries in seconds.
         session (aiohttp.ClientSession): The session used to make HTTP requests.
+        verbose (bool): Print verbose output. Default=False
         
     Returns:
         tuple: A tuple containing the response data and the nextPageToken if available.
@@ -42,7 +43,8 @@ async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session
                 # Handle comments disabled case
                 if response.status == 403 and 'disabled comments' in response_data['error'].get('message'):
                     print_params = {k:v for k,v in __params__.items() if k != 'key'}
-                    print(f"Comments are disabled for video with params: {print_params}")
+                    if verbose:
+                        print(f"Comments are disabled for video with params: {print_params}")
                     return None, None
                 
                 # Handle API limit errors and other issues
@@ -50,12 +52,14 @@ async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session
                     next_page_token = response_data.get('nextPageToken')
                     return response_data, next_page_token
                 else:
-                    print(f"Received error response: {response_data}")
+                    if verbose:
+                        print(f"Received error response: {response_data}")
                     response.raise_for_status()
         
         except (aiohttp.ClientError, asyncio.TimeoutError) as e:
             attempt += 1
-            print(f"Attempt {attempt} failed: {e}. Retrying in {retry_delay} seconds...")
+            if verbose:
+                print(f"Attempt {attempt} failed: {e}. Retrying in {retry_delay} seconds...")
             await asyncio.sleep(retry_delay)
     
     # If all retries fail, raise an exception

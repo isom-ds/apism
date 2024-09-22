@@ -3,7 +3,7 @@ import asyncio
 import aiohttp
 import copy
 
-async def _fetch_comment_thread(video_id, params, retry_limit=3, retry_delay=1, session=aiohttp.ClientSession()):
+async def _fetch_comment_thread(video_id, params, retry_limit=3, retry_delay=1, session=aiohttp.ClientSession(), verbose=False):
     """
     Fetch the comment thread for a video.
     Args:
@@ -12,6 +12,7 @@ async def _fetch_comment_thread(video_id, params, retry_limit=3, retry_delay=1, 
         retry_limit (int): The number of retries to attempt. Default=3
         retry_delay (int): The delay between retries in seconds. Default=1
         session (aiohttp.ClientSession): The session used to make HTTP requests.
+        verbose (bool): Print verbose output. Default=False
 
     Returns:
         list: All comments for the given video.
@@ -28,7 +29,7 @@ async def _fetch_comment_thread(video_id, params, retry_limit=3, retry_delay=1, 
             __params__['pageToken'] = next_page_token
 
         try:
-            data, next_page_token = await _fetch_with_retries(url, __params__, retry_limit, retry_delay, session)
+            data, next_page_token = await _fetch_with_retries(url, __params__, retry_limit, retry_delay, session, verbose)
 
             if data and 'items' in data:
                 all_comments.extend(data['items'])
@@ -42,7 +43,7 @@ async def _fetch_comment_thread(video_id, params, retry_limit=3, retry_delay=1, 
 
     return all_comments
 
-async def comment_threads(video_id, params, async_delay=0, retry_limit=3, retry_delay=1, sequential=False, session=aiohttp.ClientSession()):
+async def comment_threads(video_id, params, async_delay=0, retry_limit=3, retry_delay=1, sequential=False, session=aiohttp.ClientSession(), verbose=False):
     """
     Fetch comment threads for multiple video IDs concurrently, but staggered using asyncio.gather.
     Each video fetches comments independently, handling its own pagination with separate nextPageTokens.
@@ -55,6 +56,7 @@ async def comment_threads(video_id, params, async_delay=0, retry_limit=3, retry_
         retry_delay (int): The delay between retries in seconds. Default=1
         squential (bool): Concurrent (False) or sequential (True) API calls. Default=False
         session (aiohttp.ClientSession): The session used to make HTTP requests.
+        verbose (bool): Print verbose output. Default=False
 
     Returns:
         dict: A dictionary mapping video IDs to their respective comments.
@@ -62,12 +64,12 @@ async def comment_threads(video_id, params, async_delay=0, retry_limit=3, retry_
     __params__ = copy.deepcopy(params)
 
     if type(video_id) == str:
-        return await _fetch_comment_thread(video_id, __params__, retry_limit, retry_delay, session)
+        return await _fetch_comment_thread(video_id, __params__, retry_limit, retry_delay, session, verbose)
     
     elif type(video_id) == list:
         if sequential:
             return {
-                i: await _fetch_comment_thread(i, __params__, retry_limit, retry_delay, session) 
+                i: await _fetch_comment_thread(i, __params__, retry_limit, retry_delay, session, verbose) 
                     for i in video_id
                 }
         else:
@@ -76,7 +78,7 @@ async def comment_threads(video_id, params, async_delay=0, retry_limit=3, retry_
                 
                 for __, id in enumerate(video_id):
                     # Create a separate task for each video with independent pagination
-                    tasks.append(_fetch_comment_thread(id, __params__, retry_limit, retry_delay, session))
+                    tasks.append(_fetch_comment_thread(id, __params__, retry_limit, retry_delay, session, verbose))
                     
                     # Introduce a delay before starting the next task
                     await asyncio.sleep(async_delay)
