@@ -48,7 +48,7 @@ async def _fetch_video(video_id, params, retry_limit=3, retry_delay=1, session=a
 
     return video_data[0]
 
-async def fetch_videos(video_id, params, async_delay=0, retry_limit=3, retry_delay=1, sequential=False, session=aiohttp.ClientSession()):
+async def videos(video_id, params, async_delay=0, retry_limit=3, retry_delay=1, sequential=False, session=aiohttp.ClientSession()):
     """
     Fetch comment threads for multiple video IDs concurrently, but staggered using asyncio.gather.
     Each video fetches data independently, handling its own pagination with separate nextPageTokens.

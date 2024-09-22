@@ -42,7 +42,7 @@ async def _fetch_comment_thread(video_id, params, retry_limit=3, retry_delay=1, 
 
     return all_comments
 
-async def fetch_comment_threads(video_id, params, async_delay=0, retry_limit=3, retry_delay=1, sequential=False, session=aiohttp.ClientSession()):
+async def comment_threads(video_id, params, async_delay=0, retry_limit=3, retry_delay=1, sequential=False, session=aiohttp.ClientSession()):
     """
     Fetch comment threads for multiple video IDs concurrently, but staggered using asyncio.gather.
     Each video fetches comments independently, handling its own pagination with separate nextPageTokens.

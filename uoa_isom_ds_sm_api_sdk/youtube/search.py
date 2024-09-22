@@ -2,7 +2,7 @@ from youtube.utils import _fetch_with_retries
 import aiohttp
 import copy
 
-async def fetch_search_results(query, params, retry_limit=3, retry_delay=1, session=aiohttp.ClientSession()):
+async def search(query, params, retry_limit=3, retry_delay=1, session=aiohttp.ClientSession()):
     """
     Fetch search results for a single query with pagination support (sequential fetching).
     Args:

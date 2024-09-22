@@ -1,4 +1,4 @@
-from youtube.search import fetch_search_results
-from youtube.videos import fetch_videos
-from youtube.comment_threads import fetch_comment_threads
+from youtube.search import search
+from youtube.videos import videos
+from youtube.comment_threads import comment_threads
 from youtube.pipelines import search_videos_comments

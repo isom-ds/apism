@@ -1,7 +1,7 @@
 from youtube.utils import _fetch_with_retries
-from youtube.search import fetch_search_results
-from youtube.videos import fetch_videos
-from youtube.comment_threads import fetch_comment_threads
+from youtube.search import search
+from youtube.videos import videos
+from youtube.comment_threads import comment_threads
 import asyncio
 import aiohttp
 import copy
@@ -25,18 +25,18 @@ async def search_videos_comments(query, search_params, video_params, comment_par
     """
 
     # Fetch Search Results
-    search_results = await fetch_search_results(query, search_params, retry_limit, retry_delay, session)
+    search_results = await search(query, search_params, retry_limit, retry_delay, session)
     l_video_ids = list(set([i['id']['videoId'] for i in search_results]))
     print(f"{len(l_video_ids)} videos found")
 
     # Fetch video data
-    video_results = await fetch_videos(l_video_ids, video_params, async_delay, retry_limit, retry_delay, sequential, session)
+    video_results = await videos(l_video_ids, video_params, async_delay, retry_limit, retry_delay, sequential, session)
     # Remove videos with less than n comments
     l_video_ids_filtered = [v['id'] for k,v in video_results.items() if v['statistics']['commentCount'] >= min_comments]
     print(f"{len(l_video_ids_filtered)} videos with {min_comments}+ comments")
 
     # Fetch comments
-    comments_results = await fetch_comment_threads(l_video_ids_filtered, comment_params, async_delay, retry_limit, retry_delay, sequential, session)
+    comments_results = await comment_threads(l_video_ids_filtered, comment_params, async_delay, retry_limit, retry_delay, sequential, session)
 
     # Consolidate outputs
     output_dict = {}
