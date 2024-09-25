@@ -1,4 +1,4 @@
-from youtube.utils import _fetch_with_retries
+from utils import _fetch_with_retries
 import asyncio
 import aiohttp
 import copy
