@@ -1,7 +1,7 @@
-from youtube.utils import _fetch_with_retries
-from youtube.search import search
-from youtube.videos import videos
-from youtube.comment_threads import comment_threads
+from .utils import _fetch_with_retries
+from .search import search
+from .videos import videos
+from .comment_threads import comment_threads
 import asyncio
 import aiohttp
 import copy
