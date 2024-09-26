@@ -64,3 +64,36 @@ async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session
     
     # If all retries fail, raise an exception
     raise Exception(f"Failed to fetch data from {url} after {attempt} attempts.")
+
+def _flatten_json(nested_json, parent_key='', sep='.'):
+    """
+    Flatten a nested JSON dictionary.
+
+    Args:
+        nested_json (dict): The JSON dictionary to flatten.
+        parent_key (str): The base key string for recursion.
+        sep (str): The separator between keys.
+
+    Returns:
+        dict: The flattened JSON dictionary.
+    """
+    items = []
+    for k, v in nested_json.items():
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
+        if isinstance(v, dict):
+            items.extend(_flatten_json(v, new_key, sep=sep).items())
+        else:
+            items.append((new_key, v))
+    return dict(items)
+
+def _shorten_keys(data):
+    """
+    Shorten the keys of a dictionary to the last string after the separator '.'.
+
+    Args:
+        data (dict): The dictionary with keys to be shortened.
+
+    Returns:
+        dict: The dictionary with shortened keys.
+    """
+    return {key.split('.')[-1]: value for key, value in data.items()}
