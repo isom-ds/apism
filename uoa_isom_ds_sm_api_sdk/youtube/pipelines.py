@@ -6,7 +6,7 @@ import asyncio
 import aiohttp
 import copy
 
-async def search_videos_comments(query, search_params, video_params, comment_params, min_comments=0, async_delay=0, retry_limit=3, retry_delay=1, sequential=False, session=aiohttp.ClientSession(), verbose=False):
+async def search_videos_comments(query, search_params, video_params, comment_params, **kwargs):
     """
     Pipeline to fetch search results, video data, and comments for all videos for the query.
     Args:
@@ -24,6 +24,15 @@ async def search_videos_comments(query, search_params, video_params, comment_par
     Returns:
         dict: A dictionary mapping video IDs to their respective search result, video data, and comments.
     """
+
+    # Kwargs
+    min_comments = kwargs.get('min_comments', 0)
+    async_delay = kwargs.get('async_delay', 0)
+    retry_limit = kwargs.get('retry_limit', 3)
+    retry_delay = kwargs.get('retry_delay', 1)
+    sequential = kwargs.get('sequential', False)
+    session = kwargs.get('session', aiohttp.ClientSession())
+    verbose = kwargs.get('verbose', False)
 
     # Fetch Search Results
     search_results = await search(query, search_params, retry_limit, retry_delay, session, verbose)
@@ -43,9 +52,9 @@ async def search_videos_comments(query, search_params, video_params, comment_par
 
     # Consolidate outputs
     output_dict = {}
-    for i, v in enumerate(l_video_ids_filtered):
+    for __, v in enumerate(l_video_ids_filtered):
         # Add search results
-        output_dict[v] = {'search': search_results[i]}
+        output_dict[v] = {'search': [j for j in search_results if j['id']['videoId'] == v][0]}
         # Add video data
         output_dict[v]['video'] = video_results[v]
         # Add comments data
