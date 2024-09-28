@@ -66,7 +66,7 @@ def save_as_csv(data, file_path=None, shorten_keys=False):
             data (list): The list of dictionaries to write to the CSV file.
         """
         with open(filename, 'w', newline='') as csvfile:
-            if data:
+            if data is not None or len(data) > 0:
                 writer = csv.DictWriter(csvfile, fieldnames=list(data[0].keys()), quoting=csv.QUOTE_ALL)
                 writer.writeheader()
                 for row in data:
