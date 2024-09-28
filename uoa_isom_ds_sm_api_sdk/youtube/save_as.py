@@ -121,4 +121,5 @@ def save_as_csv(data, file_path=None, shorten_keys=False):
     write_dict_to_csv(os.path.join(file_path, 'search.csv'), search_data)
     write_dict_to_csv(os.path.join(file_path, 'video.csv'), video_data)
     write_dict_to_csv(os.path.join(file_path, 'commentThreads.csv'), comment_threads_data)
+    print(replies_data)
     write_dict_to_csv(os.path.join(file_path, 'replies.csv'), replies_data)

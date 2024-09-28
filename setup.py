@@ -6,7 +6,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='uoa_isom_ds_sm_api_sdk',
-    version='0.0.24',
+    version='0.0.25',
     description='Simplified social media API calls',
     url='https://github.com/isom-ds/social-media-api-sdk',
     author='Brice Shun',
