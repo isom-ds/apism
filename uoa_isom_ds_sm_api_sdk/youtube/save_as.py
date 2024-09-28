@@ -84,7 +84,7 @@ def save_as_csv(data, file_path=None, shorten_keys=False, **kwargs):
             data (list): The list of dictionaries to write to the CSV file.
         """
         with open(filename, 'w', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=col_names, quoting=csv.QUOTE_ALL)
+            writer = csv.DictWriter(csvfile, fieldnames=col_names, quoting=csv.QUOTE_ALL, escapechar='\\')
             writer.writeheader()
             if data:
                 for row in data:
