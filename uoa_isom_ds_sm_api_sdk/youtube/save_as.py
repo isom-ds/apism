@@ -2,6 +2,8 @@ from .utils import _flatten_json, _shorten_keys
 import json
 import csv
 import os
+import re
+import copy
 
 def save_as_json(data, file_name, flatten=False):
     """
@@ -16,14 +18,14 @@ def save_as_json(data, file_name, flatten=False):
             k: {
                 'search': _flatten_json(v['search']),
                 'video': _flatten_json(v['video']),
-                'commentThreads': [_flatten_json(i) for i in v['commentThreads']]
+                'commentThreads': [_flatten_json(i) for i in v['commentThreads'] if i]
             } for k, v in data.items()
         }
         # Flatten replies.comments in commentThreads
         for k, v in output.items():
             for idx, comments in enumerate(v['commentThreads']):
                 if 'replies.comments' in comments.keys():
-                    output[k]['commentThreads'][idx]['replies.comments'] = [_flatten_json(i) for i in comments['replies.comments']]
+                    output[k]['commentThreads'][idx]['replies.comments'] = [_flatten_json(i) for i in comments['replies.comments'] if i]
     else:
         output = data
 
@@ -39,6 +41,21 @@ def save_as_csv(data, file_path=None, shorten_keys=False):
         file_path (str): The path to the file where data will be saved.
         shorten_keys (bool): Whether to shorten the keys of the dictionary.
     """
+    # Function to remove line breaks and extra spaces from strings
+    def preprocess_data(data_in):
+        if data_in is None or len(data_in) == 0:
+            return None
+        else:
+            data = copy.deepcopy(data_in)
+            for row in data:
+                for key, value in row.items():
+                    if isinstance(value, str):
+                        # Remove \r and \n, and replace multiple spaces with a single space
+                        value = value.replace('\r', ' ').replace('\n', ' ')
+                        value = re.sub(' +', ' ', value)
+                        row[key] = value
+            return data
+
     # Function to write a dictionary to a CSV file
     def write_dict_to_csv(filename, data):
         """
@@ -49,10 +66,13 @@ def save_as_csv(data, file_path=None, shorten_keys=False):
             data (list): The list of dictionaries to write to the CSV file.
         """
         with open(filename, 'w', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=list(data[0].keys()), quoting=csv.QUOTE_ALL)
-            writer.writeheader()
-            for row in data:
-                writer.writerow(row)
+            if data:
+                writer = csv.DictWriter(csvfile, fieldnames=list(data[0].keys()), quoting=csv.QUOTE_ALL)
+                writer.writeheader()
+                for row in data:
+                    writer.writerow(row)
+            else:
+                writer = csv.DictWriter(csvfile)
     
     # Flatten dictionary
     flattened = {
@@ -66,7 +86,7 @@ def save_as_csv(data, file_path=None, shorten_keys=False):
     for k, v in flattened.items():
         for idx, comments in enumerate(v['commentThreads']):
             if 'replies.comments' in comments.keys():
-                flattened[k]['commentThreads'][idx]['replies.comments'] = [_flatten_json(i) for i in comments['replies.comments']]
+                flattened[k]['commentThreads'][idx]['replies.comments'] = [_flatten_json(i) for i in comments['replies.comments'] if i]
 
     # Extract data for each CSV
     search_data = [v['search'] for v in flattened.values()]
@@ -86,6 +106,12 @@ def save_as_csv(data, file_path=None, shorten_keys=False):
         video_data = [_shorten_keys(i) for i in video_data]
         comment_threads_data = [_shorten_keys(i) for i in comment_threads_data]
         replies_data = [_shorten_keys(i) for i in replies_data]
+
+    # Preprocess data to remove \r and \n
+    search_data = preprocess_data(search_data)
+    video_data = preprocess_data(video_data)
+    comment_threads_data = preprocess_data(comment_threads_data)
+    replies_data = preprocess_data(replies_data)
 
     # Determine file path
     if file_path is None:
