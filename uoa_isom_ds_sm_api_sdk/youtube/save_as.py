@@ -161,7 +161,7 @@ def save_as_csv(data, file_path=None, shorten_keys=False, **kwargs):
             ['search.csv', 'video.csv', 'commentThreads.csv', 'replies.csv'],
             [search_cols, video_cols, commentThreads_cols, replies_cols]
         ):
-        if output_list or len(output_list) > 0 or force_output:
+        if output_list or force_output:
             if infer_cols:
                 col_names = list({key for row in output_list for key in row.keys()})
             else:
