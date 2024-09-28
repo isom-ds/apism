@@ -50,6 +50,9 @@ async def search_videos_comments(query, search_params, video_params, comment_par
     # Fetch comments
     comments_results = await comment_threads(l_video_ids_filtered, comment_params, async_delay, retry_limit, retry_delay, sequential, session, verbose)
 
+    # Close session
+    await session.close()
+    
     # Consolidate outputs
     output_dict = {}
     for __, v in enumerate(l_video_ids_filtered):

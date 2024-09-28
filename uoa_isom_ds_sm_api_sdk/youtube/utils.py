@@ -65,9 +65,6 @@ async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session
     # If all retries fail, raise an exception
     raise Exception(f"Failed to fetch data from {url} after {attempt} attempts.")
 
-    # Close session
-    await session.close()
-
 def _flatten_json(nested_json, parent_key='', sep='.'):
     """
     Flatten a nested JSON dictionary.
