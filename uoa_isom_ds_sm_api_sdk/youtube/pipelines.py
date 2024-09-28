@@ -6,7 +6,7 @@ import asyncio
 import aiohttp
 import copy
 
-async def search_videos_comments(query, search_params, video_params, comment_params, session = aiohttp.ClientSession(), **kwargs):
+async def search_videos_comments(query, search_params, video_params, comment_params, **kwargs):
     """
     Pipeline to fetch search results, video data, and comments for all videos for the query.
     Args:
@@ -14,7 +14,6 @@ async def search_videos_comments(query, search_params, video_params, comment_par
         search_params (dict): Search parameters, such as published date range, and other search filters.
         video_params (dict): Video parameters such as id, part, maxResults, etc.
         comment_params (dict): Video parameters such as id, part, maxResults, etc.
-        session (aiohttp.ClientSession): The session used to make HTTP requests.
         min_comments (int): Minimum number of comments per video.
         async_delay(float/int): Delay in seconds between starting each task.
         retry_limit (int): The number of retries to attempt. Default=3
@@ -34,21 +33,22 @@ async def search_videos_comments(query, search_params, video_params, comment_par
     sequential = kwargs.get('sequential', False)
     verbose = kwargs.get('verbose', False)
 
-    # Fetch Search Results
-    search_results = await search(query, search_params, retry_limit, retry_delay, session, verbose)
-    l_video_ids = list(set([i['id']['videoId'] for i in search_results]))
-    if verbose:
-        print(f"{len(l_video_ids)} videos found")
+    async with aiohttp.ClientSession() as session:
+        # Fetch Search Results
+        search_results = await search(query, search_params, retry_limit, retry_delay, session, verbose)
+        l_video_ids = list(set([i['id']['videoId'] for i in search_results]))
+        if verbose:
+            print(f"{len(l_video_ids)} videos found")
 
-    # Fetch video data
-    video_results = await videos(l_video_ids, video_params, async_delay, retry_limit, retry_delay, sequential, session, verbose)
-    # Remove videos with less than n comments
-    l_video_ids_filtered = [v['id'] for k,v in video_results.items() if v['statistics']['commentCount'] >= min_comments]
-    if verbose:
-        print(f"{len(l_video_ids_filtered)} videos with {min_comments}+ comments")
+        # Fetch video data
+        video_results = await videos(l_video_ids, video_params, async_delay, retry_limit, retry_delay, sequential, session, verbose)
+        # Remove videos with less than n comments
+        l_video_ids_filtered = [v['id'] for k,v in video_results.items() if v['statistics']['commentCount'] >= min_comments]
+        if verbose:
+            print(f"{len(l_video_ids_filtered)} videos with {min_comments}+ comments")
 
-    # Fetch comments
-    comments_results = await comment_threads(l_video_ids_filtered, comment_params, async_delay, retry_limit, retry_delay, sequential, session, verbose)
+        # Fetch comments
+        comments_results = await comment_threads(l_video_ids_filtered, comment_params, async_delay, retry_limit, retry_delay, sequential, session, verbose)
     
     # Consolidate outputs
     output_dict = {}
