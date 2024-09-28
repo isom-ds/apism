@@ -63,4 +63,7 @@ async def search_videos_comments(query, search_params, video_params, comment_par
         else:
             output_dict[v]['commentThreads'] = comments_results[v]
 
+    # Close session
+    await session.close()
+
     return output_dict
