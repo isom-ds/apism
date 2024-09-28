@@ -72,7 +72,7 @@ def save_as_csv(data, file_path=None, shorten_keys=False):
                 for row in data:
                     writer.writerow(row)
             else:
-                writer = csv.DictWriter(csvfile)
+                writer = csv.DictWriter(csvfile, fieldnames=['NoData'])
     
     # Flatten dictionary
     flattened = {
