@@ -102,10 +102,10 @@ def save_as_csv(data, file_path=None, shorten_keys=False):
 
     # Shorten keys if specified
     if shorten_keys:
-        search_data = [_shorten_keys(i) for i in search_data]
-        video_data = [_shorten_keys(i) for i in video_data]
-        comment_threads_data = [_shorten_keys(i) for i in comment_threads_data]
-        replies_data = [_shorten_keys(i) for i in replies_data]
+        search_data = [_shorten_keys(i) for i in search_data if i]
+        video_data = [_shorten_keys(i) for i in video_data if i]
+        comment_threads_data = [_shorten_keys(i) for i in comment_threads_data if i]
+        replies_data = [_shorten_keys(i) for i in replies_data if i]
 
     # Preprocess data to remove \r and \n
     search_data = preprocess_data(search_data)
