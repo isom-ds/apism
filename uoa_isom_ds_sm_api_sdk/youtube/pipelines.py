@@ -5,12 +5,6 @@ from .comment_threads import comment_threads
 import asyncio
 import aiohttp
 import copy
-import logging
-import warnings
-
-# Suppress specific warnings
-logging.getLogger("aiohttp.client").setLevel(logging.ERROR)
-warnings.filterwarnings("ignore", category=ResourceWarning)
 
 async def search_videos_comments(query, search_params, video_params, comment_params, **kwargs):
     """
