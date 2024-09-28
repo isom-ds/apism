@@ -75,7 +75,7 @@ def save_as_csv(data, file_path=None, shorten_keys=False, **kwargs):
             return data
 
     # Function to write a dictionary to a CSV file
-    def write_dict_to_csv(filename, data, infer_cols=True, col_names=None):
+    def write_dict_to_csv(filename, data, col_names=None):
         """
         Write a dictionary to a CSV file.
 
@@ -85,8 +85,8 @@ def save_as_csv(data, file_path=None, shorten_keys=False, **kwargs):
         """
         with open(filename, 'w', newline='') as csvfile:
             writer = csv.DictWriter(csvfile, fieldnames=col_names, quoting=csv.QUOTE_ALL)
+            writer.writeheader()
             if data:
-                writer.writeheader()
                 for row in data:
                     writer.writerow(row)
 
@@ -161,7 +161,7 @@ def save_as_csv(data, file_path=None, shorten_keys=False, **kwargs):
             ['search.csv', 'video.csv', 'commentThreads.csv', 'replies.csv'],
             [search_cols, video_cols, commentThreads_cols, replies_cols]
         ):
-        if output_list is not None or len(output_list) > 0 or force_output:
+        if output_list or len(output_list) > 0 or force_output:
             if infer_cols:
                 col_names = list({key for row in output_list for key in row.keys()})
             else:
