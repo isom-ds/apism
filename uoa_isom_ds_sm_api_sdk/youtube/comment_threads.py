@@ -85,9 +85,10 @@ async def comment_threads(video_id, params, async_delay=0, retry_limit=3, retry_
                 
                 # Gather the results of all tasks concurrently
                 results = await asyncio.gather(*tasks)
+                return results
                 
                 # Return a dictionary mapping video IDs to their comments
-                return {id: result for id, result in zip(video_id, results)}
+                # return {id: result for id, result in zip(video_id, results)}
 
     else:
         print(f"Error fetching comments for video {video_id}")

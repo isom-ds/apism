@@ -91,9 +91,10 @@ async def videos(video_id, params, async_delay=0, retry_limit=3, retry_delay=1, 
                 
                 # Gather the results of all tasks concurrently
                 results = await asyncio.gather(*tasks)
+                return results
                 
                 # Return a dictionary mapping video IDs to their data
-                return {id: result for id, result in zip(video_id, results)}
+                # return {id: result for id, result in zip(video_id, results)}
 
     else:
         print(f"Error fetching data for video {video_id}")
