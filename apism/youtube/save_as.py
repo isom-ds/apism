@@ -73,7 +73,7 @@ def to_csv(results, file_path=None, **kwargs):
             else:
                 col_names[k] = _default_columns['default'][k]
         else:
-            col_names[k] = list({key for row in v for key in row.keys()})
+            col_names[k] = list({key for row in v if row for key in row.keys()})
 
         # Reorder dict
         output[k] = _reorder_dict(flattened[k], col_names[k])
