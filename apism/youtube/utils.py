@@ -108,6 +108,8 @@ def _flatten_results(results):
             # Add replies to output
             if replies:
                 output['commentThreadsreplies'] = sum([i for i in replies if i], [])
+            else:
+                output['commentThreadsreplies'] = None
         elif k == 'transcripts':
             output[k] = v
         else:
