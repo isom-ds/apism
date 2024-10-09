@@ -1,6 +1,8 @@
 import aiohttp
 import asyncio
 import copy
+import csv
+import re
 
 class YouTubeAPIException(Exception):
     """Custom exception for YouTube API errors"""
@@ -42,9 +44,8 @@ async def _fetch_with_retries(url, params, retry_limit=3, retry_delay=1, session
                 
                 # Handle comments disabled case
                 if response.status == 403 and 'disabled comments' in response_data['error'].get('message'):
-                    print_params = {k:v for k,v in __params__.items() if k != 'key'}
                     if verbose:
-                        print(f"Comments are disabled for video with params: {print_params}")
+                        print(f"Comments are disabled for video ID: {__params__['videoId']}")
                     return None, None
                 
                 # Handle API limit errors and other issues
@@ -89,6 +90,30 @@ def _flatten_json(nested_json, parent_key='', sep='.'):
                 items.append((new_key, v))
         return dict(items)
 
+def _flatten_results(results):
+    """
+    Flatten the results dictionary to remove nested dictionaries.
+    """
+    data = copy.deepcopy(results)
+    output = {}
+    for k,v in data.items():
+        if k == 'commentThreads':
+            output[k] = sum([[_flatten_json(i) for i in j] for j in v if j], [])
+            # Flatten replies.comments in commentThreads
+            replies = []
+            for idx, comments in enumerate(output['commentThreads']):
+                if 'replies.comments' in comments.keys():
+                    replies_comments = output['commentThreads'][idx].pop('replies.comments', None)
+                    replies.append([_flatten_json(i) for i in replies_comments if i])
+            # Add replies to output
+            if replies:
+                output['commentThreadsreplies'] = sum([i for i in replies if i], [])
+        elif k == 'transcripts':
+            output[k] = v
+        else:
+            output[k] = [_flatten_json(i) for i in v]
+    return output
+
 def _shorten_keys(data):
     """
     Shorten the keys of a dictionary to the last string after the separator '.'.
@@ -103,3 +128,62 @@ def _shorten_keys(data):
         return None
     else:
         return {key.split('.')[-1]: value for key, value in data.items()}
+
+# Function to remove line breaks and extra spaces from strings
+def _preprocess_data(data_in):
+    """
+    Preprocess data by removing line breaks and extra spaces from strings.
+    """
+    if data_in is None or len(data_in) == 0:
+        return None
+    else:
+        data = copy.deepcopy(data_in)
+        for row in data:
+            for key, value in row.items():
+                if isinstance(value, str):
+                    # Remove \r and \n, and replace multiple spaces with a single space
+                    row[key] = re.sub(r'[\r\n\s]+', ' ', value)
+        return data
+
+# Function to write a dictionary to a CSV file
+def _write_dict_to_csv(filename, data, col_names=None):
+    """
+    Write a dictionary to a CSV file.
+
+    Args:
+        filename (str): The name of the CSV file.
+        data (list): The list of dictionaries to write to the CSV file.
+    """
+    with open(filename, 'w', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=col_names, quoting=csv.QUOTE_ALL, escapechar='\\')
+        writer.writeheader()
+        if data:
+            for row in data:
+                writer.writerow(row)
+
+# Function to reorder a list of dictionaries based on column list
+def _reorder_dict(data, columns):
+    """
+    Reorder the list of dictionaries based on the column order.
+
+    Args:
+        data (dict): The list of dictionaries to reorder.
+        columns (list): The list of column names in the desired order.
+
+    Returns:
+        dict: The reordered list of dictionaries.
+    """
+    if data is None or len(data) == 0:
+        return None
+    else:
+        output = []
+        for i in data:
+            if i:
+                dict_data = {}
+                for col in columns:
+                    if col in i.keys():
+                        dict_data[col] = i[col]
+                    else:
+                        dict_data[col] = None
+                output.append(dict_data)
+        return output

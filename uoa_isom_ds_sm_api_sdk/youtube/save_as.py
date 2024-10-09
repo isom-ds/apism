@@ -1,169 +1,87 @@
-from .utils import _flatten_json, _shorten_keys
-from .columns_names import _column_names
+from .utils import _flatten_results, _shorten_keys, _preprocess_data, _reorder_dict, _write_dict_to_csv
+from .defaults import _default_columns
 import json
-import csv
 import os
 import re
-import copy
 import warnings
 
-def save_as_json(data, file_name, flatten=False):
+def to_json(results, file_path=None):
     """
     Save the search results to a file in JSON format.
 
     Args:
         data (dict): The search results data to save.
-        file_name (str): The (path and) name of the file to save the data in.
+        file_path (str): The path where the files will be saved.
     """
-    if flatten:
-        output = {
-            k: {
-                'search': _flatten_json(v['search']),
-                'video': _flatten_json(v['video']),
-                'commentThreads': [_flatten_json(i) for i in v['commentThreads'] if i]
-            } for k, v in data.items()
-        }
-        # Flatten replies.comments in commentThreads
-        for k, v in output.items():
-            for idx, comments in enumerate(v['commentThreads']):
-                if 'replies.comments' in comments.keys():
-                    output[k]['commentThreads'][idx]['replies.comments'] = [_flatten_json(i) for i in comments['replies.comments'] if i]
+    # Determine file path
+    if file_path is None:
+        output_path = os.path.join(os.getcwd(), 'results.json')
     else:
-        output = data
+        output_path = os.path.join(file_path, 'results.json')
 
-    with open(file_name, 'w') as json_file:
-        json.dump(output, json_file, indent=4)
+    with open(output_path, 'w') as json_file:
+        json.dump(results, json_file)
 
-def save_as_csv(data, file_path=None, shorten_keys=False, **kwargs):
+def to_csv(results, file_path=None, **kwargs):
     """
-    Save the search results to a file in CSV format.
+    Save the search results to files in CSV format.
 
     Args:
-        data (dict): The search results data to save.
-        file_path (str): The path to the file where data will be saved.
-        shorten_keys (bool): Whether to shorten the keys of the dictionary.
+        data (dict): The results data to save.
+        file_path (str): The path where the files will be saved.
+    Kwargs:
+        default_cols (bool): Use default column names. Default=False
+        shorten_cols (bool): Shorten column names. Default=False
+        force_output (bool): Force output even if no data is available. Default=False
+        verbose (bool): Print verbose output. Default=False
     """
     # Kwargs
-    infer_cols = kwargs.get('infer_cols', True)
+    default_cols = kwargs.get('default_cols', False)
+    shorten_cols = kwargs.get('shorten_cols', False)
     force_output = kwargs.get('force_output', False)
-
-    # Assign column names
-    if shorten_keys:
-        search_cols = _column_names['shorten']['search']
-        video_cols = _column_names['shorten']['video']
-        commentThreads_cols = _column_names['shorten']['commentThreads']
-        replies_cols = _column_names['shorten']['replies']
-    else:
-        search_cols = _column_names['original']['search']
-        video_cols = _column_names['original']['video']
-        commentThreads_cols = _column_names['original']['commentThreads']
-        replies_cols = _column_names['original']['replies']
-
-    # Function to remove line breaks and extra spaces from strings
-    def preprocess_data(data_in):
-        if data_in is None or len(data_in) == 0:
-            return None
-        else:
-            data = copy.deepcopy(data_in)
-            for row in data:
-                for key, value in row.items():
-                    if isinstance(value, str):
-                        # Remove \r and \n, and replace multiple spaces with a single space
-                        value = value.replace('\r', ' ').replace('\n', ' ')
-                        value = re.sub(' +', ' ', value)
-                        row[key] = value
-            return data
-
-    # Function to write a dictionary to a CSV file
-    def write_dict_to_csv(filename, data, col_names=None):
-        """
-        Write a dictionary to a CSV file.
-
-        Args:
-            filename (str): The name of the CSV file.
-            data (list): The list of dictionaries to write to the CSV file.
-        """
-        with open(filename, 'w', newline='') as csvfile:
-            writer = csv.DictWriter(csvfile, fieldnames=col_names, quoting=csv.QUOTE_ALL, escapechar='\\')
-            writer.writeheader()
-            if data:
-                for row in data:
-                    writer.writerow(row)
-
-    # Flatten dictionary
-    flattened = {
-        k: {
-            'search': _flatten_json(v['search']),
-            'video': _flatten_json(v['video']),
-            'commentThreads': [_flatten_json(i) for i in v['commentThreads'] if i]
-        } for k, v in data.items()
-    }
-    # Flatten replies.comments in commentThreads
-    for k, v in flattened.items():
-        for idx, comments in enumerate(v['commentThreads']):
-            if 'replies.comments' in comments.keys():
-                flattened[k]['commentThreads'][idx]['replies.comments'] = [_flatten_json(i) for i in comments['replies.comments'] if i]
-
-    # Extract data for each CSV
-    search_data = [v['search'] for v in flattened.values()]
-    video_data = [v['video'] for v in flattened.values()]
-    comment_threads_data = []
-    replies_data = []
-
-    for v in flattened.values():
-        for comment_thread in v['commentThreads']:
-            comment_threads_data.append({k: v for k, v in comment_thread.items() if k != 'replies.comments'})
-            if 'replies.comments' in comment_thread:
-                replies_data.extend(comment_thread['replies.comments'])
-
-    # Shorten keys if specified
-    if shorten_keys:
-        search_data = [_shorten_keys(i) for i in search_data if i]
-        video_data = [_shorten_keys(i) for i in video_data if i]
-        comment_threads_data = [_shorten_keys(i) for i in comment_threads_data if i]
-        replies_data = [_shorten_keys(i) for i in replies_data if i]
-
-    # Check if all columns are present
-    if infer_cols == False:
-        for datalist, cols in zip(
-            [search_data, video_data, comment_threads_data, replies_data],
-            [search_cols, video_cols, commentThreads_cols, replies_cols]
-        ):
-            if datalist or any(item is not None for item in datalist):
-                for row in datalist:
-                    for col in cols:
-                        if col not in row.keys():
-                            row[col] = None
-
-    # Preprocess data to remove \r and \n
-    search_data = preprocess_data(search_data)
-    video_data = preprocess_data(video_data)
-    comment_threads_data = preprocess_data(comment_threads_data)
-    replies_data = preprocess_data(replies_data)
+    verbose      = kwargs.get('verbose', False)
 
     # Determine file path
     if file_path is None:
         file_path = os.getcwd()
 
-    # Raise warning if no data is available
-    if search_data is None or len(search_data) == 0:
-        warnings.warn("No search data available. The search results are empty.")
-    if video_data is None or len(video_data) == 0:
-        warnings.warn("No video data available. The video results are empty.")
-    if comment_threads_data is None or len(comment_threads_data) == 0:
-        warnings.warn("No commentThreads data available. The commentThreads results are empty.")
-    if replies_data is None or len(replies_data) == 0:
-        warnings.warn("No replies data available. The replies results are empty.")
+    # Flatten dictionary
+    flattened = _flatten_results(results)
 
-    # Write data to CSV files
-    for output_list, file_name, cols in zip(
-            [search_data, video_data, comment_threads_data, replies_data],
-            ['search.csv', 'video.csv', 'commentThreads.csv', 'replies.csv'],
-            [search_cols, video_cols, commentThreads_cols, replies_cols]
-        ):
-        if output_list or force_output:
-            if infer_cols:
-                col_names = list({key for row in output_list for key in row.keys()})
+    output = {}
+    col_names = {}
+    for k, v in flattened.items():
+        # Transcripts
+        if k in ['search', 'videos', 'commentThreads', 'commentThreadsreplies']:
+            # Shorten wikipedia link for video topics
+            if k == 'videos':
+                for i in v:
+                    if 'topicDetails.topicCategories' in i.keys():
+                        i['topicDetails.topicCategories'] = '|'.join([re.search(r'/([^/]+)$', i).group(1) for i in i['topicDetails.topicCategories']])
+            
+            # Shorten keys if specified
+            if shorten_cols:
+                flattened[k] = [_shorten_keys(i) for i in v if i]
+            
+            # Preprocess data to remove \r and \n
+            flattened[k] = _preprocess_data(flattened[k])
+
+        # Column names
+        if default_cols:
+            if shorten_cols:
+                col_names[k] = _default_columns['shorten'][k]
             else:
-                col_names = cols
-            write_dict_to_csv(os.path.join(file_path, file_name), output_list, col_names)
+                col_names[k] = _default_columns['default'][k]
+        else:
+            col_names[k] = list({key for row in v for key in row.keys()})
+
+        # Reorder dict
+        output[k] = _reorder_dict(flattened[k], col_names[k])
+        
+        # Raise warning if no data is available
+        if (output[k] is None or len(output[k]) == 0) and verbose:
+            warnings.warn(f"No {k} data available.")
+
+        # Write data to CSV files
+        if output[k] or force_output:
+            _write_dict_to_csv(os.path.join(file_path, f"{k}.csv"), output[k], col_names[k])

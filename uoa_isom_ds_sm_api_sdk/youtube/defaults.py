@@ -1,5 +1,26 @@
-_column_names = {
-    'original': {
+import datetime
+
+_default_params = {
+    'search': {
+        'part': 'snippet',
+        'type': 'video',
+        'maxResults': 50,
+        'relevanceLanguage': 'en',
+        'publishedAfter': datetime.date.today().strftime('%Y-%m-%d') + 'T00:00:00Z',
+        'publishedBefore': datetime.date.today().strftime('%Y-%m-%d') + 'T23:59:59Z',
+        'order': 'viewCount'
+    },
+    'videos': {
+        'part': 'id,statistics,topicDetails'
+    },
+    'commentThreads': {
+        'part': 'id,replies,snippet',
+        'order': 'time'
+    }
+}
+
+_default_columns = {
+    'default': {
         'search': [
             'snippet.thumbnails.medium.height', 
             'snippet.channelTitle',
@@ -22,7 +43,7 @@ _column_names = {
             'snippet.description', 
             'snippet.thumbnails.high.url'
         ],
-        'video': [
+        'videos': [
             'statistics.likeCount', 
             'statistics.commentCount', 
             'kind', 
@@ -58,7 +79,7 @@ _column_names = {
             'snippet.topLevelComment.snippet.updatedAt',
             'snippet.topLevelComment.snippet.viewerRating',
         ],
-        'replies': [
+        'commentThreadsreplies': [
             'kind', 
             'id', 
             'snippet.authorDisplayName',
@@ -76,6 +97,12 @@ _column_names = {
             'snippet.likeCount', 
             'snippet.parentId',
             'snippet.canRate'
+        ],
+        'transcripts': [
+            'videoId',
+            'language',
+            'is_generated',
+            'transcript'
         ]
     },
     'shorten': {
@@ -94,7 +121,7 @@ _column_names = {
             'channelId', 
             'videoId'
         ],
-        'video': [
+        'videos': [
             'viewCount', 
             'kind', 
             'id', 
@@ -125,7 +152,7 @@ _column_names = {
             'publishedAt', 
             'videoId'
         ],
-        'replies': [
+        'commentThreadsreplies': [
             'authorProfileImageUrl', 
             'canRate', 
             'kind', 
@@ -143,6 +170,12 @@ _column_names = {
             'publishedAt', 
             'channelId', 
             'videoId'
+        ],
+        'transcripts': [
+            'videoId',
+            'language',
+            'is_generated',
+            'transcript'
         ]
     }
 }
