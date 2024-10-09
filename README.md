@@ -83,7 +83,7 @@ Endpoints not for data collection:
   "themeCSS": [
     "[id^=entity-SEARCH] .er.entityBox { fill: green;} ",
     "[id^=entity-VIDEOS] .er.entityBox { fill: green;} ",
-    "[id^=entity-COMMENTTHREADS] .er.entityBox { fill: green;} 
+    "[id^=entity-COMMENTTHREADS] .er.entityBox { fill: green;} ",
     "[id^=entity-TRANSCRIPTS] .er.entityBox { fill: green;} ",
     "[id^=entity-API] .er.entityBox { fill: blue;} ",
     "[id^=entity-API] .er.entityBox { fill: orange;} ",
