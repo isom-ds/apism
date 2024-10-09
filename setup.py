@@ -5,10 +5,10 @@ with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
 setup(
-    name='uoa_isom_ds_sm_api_sdk',
-    version='0.0.31',
+    name='apism',
+    version='0.0.1',
     description='Simplified social media API calls',
-    url='https://github.com/isom-ds/social-media-api-sdk',
+    url='https://github.com/isom-ds/apism',
     author='Brice Shun',
     author_email='brice.kok.shun@auckland.ac.nz',
     license='internal_use',
