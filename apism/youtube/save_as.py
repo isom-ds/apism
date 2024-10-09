@@ -60,7 +60,7 @@ def to_csv(results, file_path=None, **kwargs):
                         i['topicDetails.topicCategories'] = '|'.join([re.search(r'/([^/]+)$', i).group(1) for i in i['topicDetails.topicCategories']])
             
             # Shorten keys if specified
-            if shorten_cols:
+            if shorten_cols and flattened[k]:
                 flattened[k] = [_shorten_keys(i) for i in v if i]
             
             # Preprocess data to remove \r and \n
