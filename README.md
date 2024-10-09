@@ -103,7 +103,6 @@ erDiagram
     VIDEOS ||--o{ COMMENTTHREADS : videoId
     VIDEOS ||--|| CHANNELS : channelId
     VIDEOS ||--o{ VIDEOCATEGORIES : categoryId
-    VIDEOS ||--o{ CAPTIONS : videoId
     VIDEOS ||--o{ TRANSCRIPTS : videoId
     PLAYLISTS ||--o{ PLAYLISTIMAGES : playlistId
     PLAYLISTS ||--o{ PLAYLISTITEMS : playlistId
