@@ -34,8 +34,6 @@ class YouTubeAPI:
         self.verbose = kwargs.get('verbose', False)
         self.async_delay = kwargs.get('async_delay', 0)
         self.sequential = kwargs.get('sequential', False)
-        self.cookies = kwargs.get('cookies', None)
-        self.code_language = kwargs.get('code_language', 'en')
 
         # Dictionary to store output
         self.results = {}
@@ -157,7 +155,7 @@ class YouTubeAPI:
     # ==============================================
     # Method to fetch transcript
     # ==============================================
-    async def transcript(self, video_id=None):
+    async def transcript(self, video_id=None, code_language='en', cookies=None, batch_size=5, batch_delay=1):
         """
         Fetch transcripts for a single video ID or list of video IDs.
         Args:
@@ -175,7 +173,16 @@ class YouTubeAPI:
             assert isinstance(video_id, str) or isinstance(video_id, list), "video_id must be a list of video IDs."
         
         # Call transcripts API
-        self.results['transcripts'] = await transcript(video_id, self.code_language, self.cookies)
+        self.results['transcripts'] = await transcript(
+                                                video_id, 
+                                                code_language, 
+                                                cookies, 
+                                                self.retry_limit, 
+                                                self.retry_delay, 
+                                                batch_size, 
+                                                batch_delay, 
+                                                self.verbose
+                                            )
 
         if self.verbose:
             print(f"Transcripts for {len([i for i in self.results['transcripts'] if i])} videos retrieved")
