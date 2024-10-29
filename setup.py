@@ -6,7 +6,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='apism',
-    version='0.0.11',
+    version='0.0.12',
     description='Simplified social media API calls',
     url='https://github.com/isom-ds/apism',
     author='Brice Shun',
