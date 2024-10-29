@@ -190,13 +190,23 @@ class YouTubeAPI:
     # ==============================================
     # Method to save output as JSON or CSV
     # ==============================================
-    def to_json(self, file_path=None):
+    def to_json(self, file_path=None, **kwargs):
         """
-        Save output as a JSON file.
+        Save the search results to files in JSON format.
+
         Args:
-            file_path (str): The path where results.json will be saved.
+            data (dict): The results data to save.
+            file_path (str): The path where the files will be saved.
+            default_cols (bool): Use default column names. Default=False
+            shorten_cols (bool): Shorten column names. Default=False
+            force_output (bool): Force output even if no data is available. Default=False
+            verbose (bool): Print verbose output. Default=False
         """
-        to_json(self.results, file_path)
+        default_cols = kwargs.get('default_cols', False)
+        shorten_cols = kwargs.get('shorten_cols', False)
+        force_output = kwargs.get('force_output', False)
+        verbose      = kwargs.get('verbose', False)
+        to_json(self.results, file_path, default_cols=default_cols, shorten_cols=shorten_cols, force_output=force_output, verbose=verbose)
     
     def to_csv(self, file_path=None, **kwargs):
         """
