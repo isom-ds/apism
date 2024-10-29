@@ -143,7 +143,7 @@ async def transcript(video_id, code_language='en', cookies=None, retry_limit=3, 
         for i in results:
             if i:
                 try:
-                    i['transcript'] = re.sub(r'[\r\n\s]+', ' ', formatter.format_transcript(i['transcript']))
+                    i['transcript'] = re.sub(r'[\r\n\s]+', ' ', formatter.format_transcript(i['transcript'])).replace(',', '')
                     final_results.append(i)
                 except:
                     pass
