@@ -138,9 +138,14 @@ async def transcript(video_id, code_language='en', cookies=None, retry_limit=3, 
                     await asyncio.sleep(batch_delay)
 
         # Clean up transcripts
+        final_results = []
         formatter = TextFormatter()
         for i in results:
             if i:
-                i['transcript'] = re.sub(r'[\r\n\s]+', ' ', formatter.format_transcript(i['transcript']))
+                try:
+                    i['transcript'] = re.sub(r'[\r\n\s]+', ' ', formatter.format_transcript(i['transcript']))
+                    final_results.append(i)
+                except:
+                    pass
 
-        return results
+        return final_results
