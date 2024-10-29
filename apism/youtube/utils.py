@@ -143,8 +143,8 @@ def _preprocess_data(data_in):
         for row in data:
             for key, value in row.items():
                 if isinstance(value, str):
-                    # Remove \r and \n, and replace multiple spaces with a single space
-                    row[key] = re.sub(r'[\r\n\s]+', ' ', value)
+                    # Remove \r and \n and commas, and replace multiple spaces with a single space
+                    row[key] = re.sub(r'[\r\n\s]+', ' ', value).replace(',', '')
         return data
 
 # Function to write a dictionary to a CSV file

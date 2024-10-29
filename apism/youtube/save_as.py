@@ -63,7 +63,7 @@ def to_csv(results, file_path=None, **kwargs):
             if shorten_cols and flattened[k]:
                 flattened[k] = [_shorten_keys(i) for i in v if i]
             
-            # Preprocess data to remove \r and \n
+            # Preprocess data to remove \r and \n and commas
             flattened[k] = _preprocess_data(flattened[k])
 
         # Column names
