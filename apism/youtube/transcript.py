@@ -72,25 +72,28 @@ def _transcript(video_id, code_language='en', cookies=None, retry_limit=3, retry
     else:
         generated = next((item for item in l_language if item[1] is True), None)
         manual = next((item for item in l_language if item[1] is False), None)
-        if generated:
-            transcript = transcript_list.find_generated_transcript([generated[0]])
-            translated_transcript = transcript.translate(code_language)
-            return {
-                    'videoId': transcript.video_id, 
-                    'language': transcript.language_code,
-                    'is_generated': transcript.is_generated,
-                    'transcript': translated_transcript.fetch()
-                }
-        elif manual:
-            transcript = transcript_list.find_manually_created_transcript([manual[0]])
-            translated_transcript = transcript.translate(code_language)
-            return {
-                    'videoId': transcript.video_id, 
-                    'language': transcript.language_code,
-                    'is_generated': transcript.is_generated,
-                    'transcript': translated_transcript.fetch()
-                }
-        else:
+        try:
+            if generated:
+                transcript = transcript_list.find_generated_transcript([generated[0]])
+                translated_transcript = transcript.translate(code_language)
+                return {
+                        'videoId': transcript.video_id, 
+                        'language': transcript.language_code,
+                        'is_generated': transcript.is_generated,
+                        'transcript': translated_transcript.fetch()
+                    }
+            elif manual:
+                transcript = transcript_list.find_manually_created_transcript([manual[0]])
+                translated_transcript = transcript.translate(code_language)
+                return {
+                        'videoId': transcript.video_id, 
+                        'language': transcript.language_code,
+                        'is_generated': transcript.is_generated,
+                        'transcript': translated_transcript.fetch()
+                    }
+            else:
+                return None
+        except:
             return None
 
 # Asynchronous function to call the blocking function
