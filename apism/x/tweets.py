@@ -29,8 +29,11 @@ async def _tweets(bearer_token, url, params, retry_limit=3, retry_delay=1, sessi
 
         data, next_token = await _fetch_with_retries(bearer_token, url, params, retry_limit, retry_delay, session, verbose)
 
-        if data and 'data' in data:
-            all_results.extend(data['data'])
+        if data:
+            if 'data' in data.keys():
+                all_results.extend(data['data'])
+            else:
+                all_results.extend(data)
 
         # Break the loop when no more pages are available
         if not next_token:
