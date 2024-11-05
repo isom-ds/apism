@@ -65,8 +65,5 @@ class xAPI:
         )
 
         if self.verbose:
-            if 'data' in self.results['search_tweets'].keys():
-                l_tweet_ids = [i['id'] for i in self.results['search_tweets']['data']]
-            else:
-                l_tweet_ids = [i['id'] for i in self.results['search_tweets']]
+            l_tweet_ids = [i['id'] for i in self.results['search_tweets']]
             print(f"{len(l_tweet_ids)} tweets found")
