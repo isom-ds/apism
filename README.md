@@ -44,25 +44,33 @@ yt.to_csv()
 ### X API v2
 
 ```mermaid
+%%{init: {
+  "themeCSS": [
+    "[id^=entity-SEARCHTWEETS] .er.entityBox { fill: green;} ",
+    "[id^=entity-API] .er.entityBox { fill: blue;} ",
+    "[id^=entity-API] .er.entityBox { fill: orange;} ",
+    "[id^=entity-API] .er.entityBox { fill: red;} "
+    ]
+}}%%
 erDiagram
-  TWEETS
-  TIMELINES
-  SEARCHTWEETS
-  TWEETCOUNTS
-  FILTEREDSTREAM
-  VOLUMESTREAMS
-  RETWEETS
-  QUOTETWEETS
-  LIKES
-  BOOKMARKS
-  USERSLOOKUP
-  FOLLOWS
-  SEARCH
-  TRENDS
+  SEARCHTWEETS }|--|{ TWEETSLOOKUP : tweet_id
+  SEARCHTWEETS }|--|{ TWEETCOUNTS : tweet_id
+  SEARCHTWEETS }|--|{ RETWEETS : tweet_id
+  SEARCHTWEETS }|--|{ LIKES : tweet_id
+  SEARCHTWEETS }|--|{ QUOTETWEETS : tweet_id
+  SEARCHTWEETS }|--|{ USERSLOOKUP : user_id
+  USERSLOOKUP }|--|{ BOOKMARKS: user_id
+  USERSLOOKUP }|--|{ TIMELINES: user_id
+  SEARCH }|--|{ BOOKMARKS: user_id
+  SEARCH }|--|{ TIMELINES: user_id
   LISTSLOOKUP
   LISTTWEETSLOOKUP
   LISTMEMBERS
 ```
+
+Endpoints to define rules for stream data collection
+- `Filtered Stream`
+- `Volume Stream`
 
 Endpoints not for data collection:
 
@@ -71,6 +79,7 @@ Endpoints not for data collection:
 - `Direct Messages`
 - `Usage`
 - `Hide Replies`
+- `Follows`
 - `Blocks`
 - `Mutes`
 
