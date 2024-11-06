@@ -2,8 +2,8 @@
 
 A collection of async methods for social media APIs including:
 
-- [X API v2](<https://developer.x.com/en/docs/x-api>)
 - [YouTube Data API](<https://developers.google.com/youtube/v3>)
+- [X API v2](<https://developer.x.com/en/docs/x-api>)
 
 ---
 
@@ -17,13 +17,13 @@ You can install this package directly from GitHub.
 pip install git+https://github.com/isom-ds/apism.git
 ```
 
-### Usage - YouTube
+### YouTube
 
 ```python
 from apism import YouTubeAPI
 
 # Initialise the YouTube API
-yt = YouTubeAPI(api_key)
+yt = YouTubeAPI(key)
 
 # Results are stored in the object: yt.results
 await yt.search('FTX')
@@ -36,54 +36,28 @@ yt.to_json()
 yt.to_csv()
 ```
 
+### X
+
+```python
+from apism import xAPI
+
+# Initialise the X API
+params = {
+    'search_tweets': {
+        "query": "OpenAI",
+        "max_results": 10
+    }
+}
+x = xAPI(token, params)
+
+# Results are stored in the object: x.results
+await x.search_tweets(type='recent')
+```
 
 ---
 
 ## Data Models
 
-### X API v2
-
-```mermaid
-%%{init: {
-  "themeCSS": [
-    "[id^=entity-SEARCHTWEETS] .er.entityBox { fill: green;} ",
-    "[id^=entity-API] .er.entityBox { fill: blue;} ",
-    "[id^=entity-API] .er.entityBox { fill: orange;} ",
-    "[id^=entity-API] .er.entityBox { fill: red;} "
-    ]
-}}%%
-erDiagram
-  SEARCHTWEETS }|--|{ TWEETSLOOKUP : tweet_id
-  SEARCHTWEETS }|--|{ TWEETCOUNTS : tweet_id
-  SEARCHTWEETS }|--|{ RETWEETS : tweet_id
-  SEARCHTWEETS }|--|{ LIKES : tweet_id
-  SEARCHTWEETS }|--|{ QUOTETWEETS : tweet_id
-  SEARCHTWEETS }|--|{ USERSLOOKUP : user_id
-  USERSLOOKUP }|--|{ BOOKMARKS: user_id
-  USERSLOOKUP }|--|{ TIMELINES: user_id
-  SEARCH }|--|{ BOOKMARKS: user_id
-  SEARCH }|--|{ TIMELINES: user_id
-  LISTSLOOKUP
-  LISTTWEETSLOOKUP
-  LISTMEMBERS
-```
-
-Endpoints to define rules for stream data collection
-- `Filtered Stream`
-- `Volume Stream`
-
-Endpoints not for data collection:
-
-- `Manage Tweets`
-- `Spaces`
-- `Direct Messages`
-- `Usage`
-- `Hide Replies`
-- `Follows`
-- `Blocks`
-- `Mutes`
-
----
 
 ### YouTube Data API v3
 
@@ -137,3 +111,51 @@ Endpoints not for data collection:
 - `Thumbnails`
 - `VideoAbuseReportReasons`
 - `Watermarks`
+
+### X API v2
+
+```mermaid
+%%{init: {
+  "themeCSS": [
+    "[id^=entity-SEARCHTWEETS] .er.entityBox { fill: green;} ",
+    "[id^=entity-API] .er.entityBox { fill: blue;} ",
+    "[id^=entity-API] .er.entityBox { fill: orange;} ",
+    "[id^=entity-API] .er.entityBox { fill: red;} "
+    ]
+}}%%
+erDiagram
+  SEARCHTWEETS }|--|{ TWEETSLOOKUP : tweet_id
+  SEARCHTWEETS }|--|{ TWEETCOUNTS : tweet_id
+  SEARCHTWEETS }|--|{ RETWEETS : tweet_id
+  SEARCHTWEETS }|--|{ LIKES : tweet_id
+  SEARCHTWEETS }|--|{ QUOTETWEETS : tweet_id
+  SEARCHTWEETS }|--|{ USERSLOOKUP : user_id
+  USERSLOOKUP }|--|{ BOOKMARKS: user_id
+  USERSLOOKUP }|--|{ TIMELINES: user_id
+  SEARCH }|--|{ BOOKMARKS: user_id
+  SEARCH }|--|{ TIMELINES: user_id
+  LISTSLOOKUP
+  LISTTWEETSLOOKUP
+  LISTMEMBERS
+```
+
+🟩 Available
+🟦 WIP
+🟧 Fixing
+🟥 Error
+⬜ Not available
+
+Endpoints to define rules for stream data collection
+- `Filtered Stream`
+- `Volume Stream`
+
+Endpoints not for data collection:
+
+- `Manage Tweets`
+- `Spaces`
+- `Direct Messages`
+- `Usage`
+- `Hide Replies`
+- `Follows`
+- `Blocks`
+- `Mutes`
