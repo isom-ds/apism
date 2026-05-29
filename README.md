@@ -1,5 +1,14 @@
 # APISM
 
+## Abstract
+Social media research at scale requires programmatic access to platform APIs, yet the heterogeneity of API interfaces and authentication schemes introduces significant friction. This package provides a unified, asynchronous Python interface for the YouTube Data API v3 and X API v2, abstracting endpoint complexity into simple method calls and handling data serialisation to JSON and CSV. It was developed as foundational data collection infrastructure for the *Epidemiology of Online Emotions* PhD research programme.
+
+## Research Context
+- **Thesis:** *Epidemiology of Online Emotions* (Kok-Shun, 2026)
+- **Chapter:** Research infrastructure (used across Chapters 4–7)
+- **Contribution type:** Artefact (open-source social media data collection library)
+- **Associated papers:** "Leveraging ChatGPT for Sponsored Ad Detection and Keyword Extraction in Youtube Videos," IEEE i-COSTE 2024; "An AI-powered solution for detecting and categorising sponsored ad segments in YouTube videos," *Software Impacts* 2025
+
 A collection of async methods for social media APIs including:
 
 - [YouTube Data API](<https://developers.google.com/youtube/v3>)
@@ -159,3 +168,37 @@ Endpoints not for data collection:
 - `Follows`
 - `Blocks`
 - `Mutes`
+
+---
+
+## References
+
+[1] B. V. Kok-Shun and J. Chan, "Leveraging ChatGPT for Sponsored Ad Detection and Keyword Extraction in Youtube Videos," in *2024 International Conference on Sustainable Technology and Engineering (i-COSTE)*, Perth, Australia: IEEE, 2024, pp. 1–6.
+
+[2] J. Chan and B. V. Kok-Shun, "An AI-powered solution for detecting and categorising sponsored ad segments in YouTube videos," *Software Impacts*, vol. 24, p. 100759, 2025.
+
+<details>
+<summary>BibTeX</summary>
+
+```bibtex
+@inproceedings{P12_kok-shun_leveraging_2024,
+  address   = {Perth, Australia},
+  title     = {Leveraging {ChatGPT} for {Sponsored} {Ad} {Detection} and {Keyword} {Extraction} in {Youtube} {Videos}},
+  booktitle = {2024 {International} {Conference} on {Sustainable} {Technology} and {Engineering} (i-{COSTE})},
+  publisher = {IEEE},
+  author    = {Kok-Shun, Brice Valentin and Chan, Johnny},
+  year      = {2024},
+  pages     = {1--6},
+}
+
+@article{P12_chan_ai-powered_2025,
+  title   = {An {AI}-powered solution for detecting and categorising sponsored ad segments in {YouTube} videos},
+  volume  = {24},
+  journal = {Software Impacts},
+  author  = {Chan, Johnny and Kok-Shun, Brice Valentin},
+  year    = {2025},
+  pages   = {100759},
+}
+```
+
+</details>
