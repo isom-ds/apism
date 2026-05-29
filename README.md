@@ -173,9 +173,9 @@ Endpoints not for data collection:
 
 ## References
 
-[1] B. V. Kok-Shun and J. Chan, "Leveraging ChatGPT for Sponsored Ad Detection and Keyword Extraction in Youtube Videos," in *2024 International Conference on Sustainable Technology and Engineering (i-COSTE)*, Perth, Australia: IEEE, 2024, pp. 1–6.
+[1] B. V. Kok-Shun and J. Chan, "Leveraging ChatGPT for Sponsored Ad Detection and Keyword Extraction in Youtube Videos," in *2024 International Conference on Sustainable Technology and Engineering (i-COSTE)*, Perth, Australia: IEEE, 2024, pp. 1–6 doi: [10.1109/i-COSTE63786.2024.11024962](https://doi.org/10.1109/i-COSTE63786.2024.11024962).
 
-[2] J. Chan and B. V. Kok-Shun, "An AI-powered solution for detecting and categorising sponsored ad segments in YouTube videos," *Software Impacts*, vol. 24, p. 100759, 2025.
+[2] J. Chan and B. V. Kok-Shun, "An AI-powered solution for detecting and categorising sponsored ad segments in YouTube videos," *Software Impacts*, vol. 24, p. 100759, 2025 doi: [10.1016/j.simpa.2025.100759](https://doi.org/10.1016/j.simpa.2025.100759).
 
 <details>
 <summary>BibTeX</summary>
