@@ -189,6 +189,7 @@ Endpoints not for data collection:
   author    = {Kok-Shun, Brice Valentin and Chan, Johnny},
   year      = {2024},
   pages     = {1--6},
+  doi      = {10.1109/i-COSTE63786.2024.11024962},
 }
 
 @article{P12_chan_ai-powered_2025,
@@ -198,6 +199,7 @@ Endpoints not for data collection:
   author  = {Chan, Johnny and Kok-Shun, Brice Valentin},
   year    = {2025},
   pages   = {100759},
+  doi      = {10.1016/j.simpa.2025.100759},
 }
 ```
 
